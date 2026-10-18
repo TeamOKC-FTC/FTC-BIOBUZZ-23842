@@ -28,7 +28,7 @@ public class fullRobot extends LinearOpMode {
     public double lowVelocity = 900;
     public double superlowVelocity = 800;
 
-    double curTargetVelocity = highVelocity;
+    double curTargetVelocity = superlowVelocity;
 
     double F = 0;
 
@@ -79,11 +79,14 @@ public class fullRobot extends LinearOpMode {
 RightShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
         double startTime = 0;
         autoTurn = false;
+        boolean shooterReady =false;
 
         waitForStart();
         while (opModeIsActive()) {
 
             double forwardSpeed = -gamepad1.left_stick_y;
+
+
 
 
             double turnSpeed = gamepad1.right_stick_x;
@@ -106,8 +109,8 @@ RightShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoeffici
             double curvelocityRight = RightShooter.getVelocity();
             double curvelocityLeft = LeftShooter.getVelocity();
 
-            double righterror = curTargetVelocity - curvelocityRight;
-            double lefterror = curTargetVelocity - curvelocityLeft;
+            double righterror =Math.abs(curTargetVelocity - curvelocityRight);
+            double lefterror = Math.abs(curTargetVelocity - curvelocityLeft);
             if (gamepad1.dpadLeftWasPressed()){
                 F -= stepSizes[stepIndex];
             }
@@ -121,9 +124,18 @@ RightShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoeffici
             if (gamepad1.dpadDownWasPressed()){
                 P-= stepSizes[stepIndex];
             }
+            if (shooterReady) {
+                intake.setPower(1);
+                feeder.setPower(1);
+            }
            if (gamepad1.right_trigger>.1) {
-               intake.setPower(1);
-               feeder.setPower(1);
+               curTargetVelocity=highVelocity;
+               if (righterror<20 && lefterror<20) {
+                   shooterReady = true;
+               }
+               if (righterror>20 && lefterror>20) {
+                   shooterReady = false;
+               }
 
            }
            if (gamepad1.left_trigger>.1) {
