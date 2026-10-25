@@ -41,7 +41,7 @@ public class fullRobot extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Initialize hardware components
-  leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
@@ -70,122 +70,115 @@ public class fullRobot extends LinearOpMode {
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setPower(0.0);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+
         LeftShooter.setDirection(DcMotorSimple.Direction.REVERSE);
-        RightShooter.setDirection(DcMotorSimple.Direction.REVERSE);
+        RightShooter.setDirection(DcMotorSimple.Direction.FORWARD);
         LeftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P,0,0,F);
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, 0, 0, F);
         LeftShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-RightShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        RightShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
         double startTime = 0;
         autoTurn = false;
-        boolean shooterReady =false;
+        boolean shooterReady = false;
 
         waitForStart();
-        while (opModeIsActive()) {
+        if (opModeIsActive()) {
+            while (opModeIsActive()) {
 
-            double forwardSpeed = -gamepad1.left_stick_y;
-
-
-
-
-            double turnSpeed = gamepad1.right_stick_x;
-
-            double leftPower = forwardSpeed + turnSpeed;
-
-            double rightPower = forwardSpeed - turnSpeed;
-           leftFront.setPower(leftPower);
-            leftBack.setPower(leftPower);
-            //   Set the power of BOTH right motors to rightPower
-            rightFront.setPower(rightPower);
-            rightBack.setPower(rightPower);
-            RightShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
-            LeftShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
-
-            //set velocity
-           RightShooter.setVelocity(curTargetVelocity);
-            LeftShooter.setVelocity(curTargetVelocity);
-
-            double curvelocityRight = RightShooter.getVelocity();
-            double curvelocityLeft = LeftShooter.getVelocity();
-
-            double righterror =Math.abs(curTargetVelocity - curvelocityRight);
-            double lefterror = Math.abs(curTargetVelocity - curvelocityLeft);
-            if (gamepad1.dpadLeftWasPressed()){
-                F -= stepSizes[stepIndex];
-            }
-
-            if (gamepad1.dpadRightWasPressed()){
-                F += stepSizes[stepIndex];
-            }
-            if (gamepad1.dpadUpWasPressed()){
-                P += stepSizes[stepIndex];
-            }
-            if (gamepad1.dpadDownWasPressed()){
-                P-= stepSizes[stepIndex];
-            }
-            if (shooterReady) {
-                intake.setPower(1);
-                feeder.setPower(1);
-            }
-           if (gamepad1.right_trigger>.1) {
-               curTargetVelocity=highVelocity;
-               if (righterror<20 && lefterror<20) {
-                   shooterReady = true;
-               }
-               if (righterror>20 && lefterror>20) {
-                   shooterReady = false;
-               }
-
-           }
-           if (gamepad1.left_trigger>.1) {
-               intake.setPower(1);
-               feeder.setPower(-1);
-           }
-           if (gamepad1.right_bumper) {
-               intake.setPower(-1);
-               feeder.setPower(-1);
-           }
+                double forwardSpeed = -gamepad1.left_stick_y;
 
 
+                double turnSpeed = gamepad1.right_stick_x;
 
-            telemetry.addData("F", F);
-            telemetry.addData("P", P);
-            telemetry.addData("curvelocityRight", curvelocityRight);
-            telemetry.addData("curvelocityLeft", curvelocityLeft);
-telemetry.addData("righterror", righterror);
-telemetry.addData("lefterror", lefterror);
-telemetry.addData("curTargetVelocity", curTargetVelocity);
+                double leftPower = forwardSpeed + turnSpeed;
 
-            //   LLResult result = limelight.getLatestResult();
-            //if (result != null && result.isValid()) {
-              //  double tx = result.getTx(); // How far left or right the target is (degrees)
-               // double ta = result.getTa(); // How big the target looks (0%-100% of the image)
+                double rightPower = forwardSpeed - turnSpeed;
+                leftFront.setPower(leftPower);
+                leftBack.setPower(leftPower);
+                //   Set the power of BOTH right motors to rightPower
+                rightFront.setPower(rightPower);
+                rightBack.setPower(rightPower);
+                RightShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+                LeftShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
-              //  telemetry.addData("tx: ", tx);
-               // telemetry.addData("ta: ", ta);
+                //set velocity
+                RightShooter.setVelocity(curTargetVelocity);
+                LeftShooter.setVelocity(curTargetVelocity);
 
-                //double kP = 0.02;
-               // double kF = 0.05;
-             //   double kFThreshold = 0.5;
+                double curvelocityRight = RightShooter.getVelocity();
+                double curvelocityLeft = LeftShooter.getVelocity();
 
-
-              //  if (gamepad1.right_bumper) {
-                   // turnSpeed = (tx - 0) * kP;
-                  //  if ((tx - 0) > kFThreshold) {
-                 //       turnSpeed += kF;
-                 //   }
-                   // if ((tx - 0) < -kFThreshold) {
-                  //      turnSpeed -= kF;
-                    //}
+                double righterror = Math.abs(curTargetVelocity - curvelocityRight);
+                double lefterror = Math.abs(curTargetVelocity - curvelocityLeft);
+                if (gamepad1.dpadLeftWasPressed()) {
+                    F -= stepSizes[stepIndex];
                 }
 
+                if (gamepad1.dpadRightWasPressed()) {
+                    F += stepSizes[stepIndex];
+                }
+                if (gamepad1.dpadUpWasPressed()) {
+                    P += stepSizes[stepIndex];
+                }
+                if (gamepad1.dpadDownWasPressed()) {
+                    P -= stepSizes[stepIndex];
+                }
+                if (shooterReady) {
+                    intake.setPower(1);
+                    feeder.setPower(1);
+                }
+                if (gamepad1.right_bumper) {
+
+                    RightShooter.setVelocity(1500);
+                    LeftShooter.setVelocity(1500);
+
+                }
+                if (gamepad1.left_trigger > .1) {
+                    intake.setPower(1);
+                    feeder.setPower(-1);
+                }
+                // if (gamepad1.right_bumper) {
+                //    intake.setPower(-1);
+                //    feeder.setPower(-1);
+                //    }
 
 
+                telemetry.addData("F", F);
+                telemetry.addData("P", P);
+                telemetry.addData("curvelocityRight", curvelocityRight);
+                telemetry.addData("curvelocityLeft", curvelocityLeft);
+                telemetry.addData("righterror", righterror);
+                telemetry.addData("lefterror", lefterror);
+                telemetry.addData("curTargetVelocity", curTargetVelocity);
 
+                //   LLResult result = limelight.getLatestResult();
+                //if (result != null && result.isValid()) {
+                //  double tx = result.getTx(); // How far left or right the target is (degrees)
+                // double ta = result.getTa(); // How big the target looks (0%-100% of the image)
+
+                //  telemetry.addData("tx: ", tx);
+                // telemetry.addData("ta: ", ta);
+
+                //double kP = 0.02;
+                // double kF = 0.05;
+                //   double kFThreshold = 0.5;
+
+
+                //  if (gamepad1.right_bumper) {
+                // turnSpeed = (tx - 0) * kP;
+                //  if ((tx - 0) > kFThreshold) {
+                //       turnSpeed += kF;
+                //   }
+                // if ((tx - 0) < -kFThreshold) {
+                //      turnSpeed -= kF;
+                //}
+            }
 
 
         }
+    }
     }
     //   Set the power of BOTH left motors to leftPower
 
