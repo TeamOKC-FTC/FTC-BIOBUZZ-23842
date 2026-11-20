@@ -16,20 +16,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
-@Autonomous(name = "red_back")
+@Autonomous(name = "closer to wall first tip")
 //@Disabled
 public class red extends LinearOpMode {
 
 
-    public double highVelocity = 1105;
+    public double highVelocity = 1083;
    public double lowVelocity = 900;
     public double superlowVelocity = 800;
 
     double curTargetVelocity = superlowVelocity;
 
-    double F =20;
+    double F =15;
 
-    double P =20;
+    double P =175;
 
     // --- Unit Constants ---
     private static final DistanceUnit ODOMETRY_DISTANCE_UNIT = DistanceUnit.MM;
@@ -82,7 +82,7 @@ public class red extends LinearOpMode {
     private final double MIN_POWER_TO_MOVE = 0.15;
     private final double POWER_EPSILON = 0.01; // any power command less than this is considered zero
 
-    private final double P_HEADING_COEFF = 0.8;
+    private final double P_HEADING_COEFF = 0.75;
     private final double I_HEADING_COEFF = 0.00;
     private final double D_HEADING_COEFF = 0.00;
     // --- Tolerances ---
@@ -202,22 +202,40 @@ public class red extends LinearOpMode {
             case 0:
                shooterRight.setVelocity(highVelocity);
                shooterLeft.setVelocity(highVelocity);
-                navigateToTargetWaypoint(new Waypoint(350,0, ODOMETRY_ANGLE_UNIT.fromDegrees(0),true));
+                navigateToTargetWaypoint(new Waypoint(535,0, ODOMETRY_ANGLE_UNIT.fromDegrees(0),true));
                sleep(2000);
-               transfer.setPower(.4);
+               transfer.setPower(-.55);
                sleep(200);
-               intake.setPower(.4);
-               sleep(5000);
-                shooterRight.setVelocity(0);
-                shooterLeft.setVelocity(0);
+               intake.setPower(-.55);
+               sleep(3500);
+
                 intake.setPower(0);
                 transfer.setPower(0);
+                navigateToTargetWaypoint(new Waypoint(300,700, ODOMETRY_ANGLE_UNIT.fromDegrees(0),false));
 
 
+               navigateToTargetWaypoint(new Waypoint(410,900, ODOMETRY_ANGLE_UNIT.fromDegrees(180),false));
+                intake.setPower(-.6);
+                navigateToTargetWaypoint(new Waypoint(-100,1050, ODOMETRY_ANGLE_UNIT.fromDegrees(180),false));
+                navigateToTargetWaypoint(new Waypoint(-430,1055, ODOMETRY_ANGLE_UNIT.fromDegrees(180),false));
+                navigateToTargetWaypoint(new Waypoint(-100,1050, ODOMETRY_ANGLE_UNIT.fromDegrees(180),false));
+                navigateToTargetWaypoint(new Waypoint(-430,1060, ODOMETRY_ANGLE_UNIT.fromDegrees(180),false));
+                navigateToTargetWaypoint(new Waypoint(-100,1050, ODOMETRY_ANGLE_UNIT.fromDegrees(180),false));
+                navigateToTargetWaypoint(new Waypoint(-430,1055, ODOMETRY_ANGLE_UNIT.fromDegrees(180),false));
+                navigateToTargetWaypoint(new Waypoint(425,900, ODOMETRY_ANGLE_UNIT.fromDegrees(180),false));
+                navigateToTargetWaypoint(new Waypoint(1100,900, ODOMETRY_ANGLE_UNIT.fromDegrees(180),false));
+                navigateToTargetWaypoint(new Waypoint(2000,900, ODOMETRY_ANGLE_UNIT.fromDegrees(180),false));
 
-               navigateToTargetWaypoint(new Waypoint(112,770, ODOMETRY_ANGLE_UNIT.fromDegrees(0),true));
-                navigateToTargetWaypoint(new Waypoint(2122,1070, ODOMETRY_ANGLE_UNIT.fromDegrees(0),false));
-                default:
+                navigateToTargetWaypoint(new Waypoint(2250,900, ODOMETRY_ANGLE_UNIT.fromDegrees(180),false));
+
+                navigateToTargetWaypoint(new Waypoint(2200,100, ODOMETRY_ANGLE_UNIT.fromDegrees(180),true));
+                sleep(1000);
+                transfer.setPower(-.6);
+                sleep(200);
+                intake.setPower(-.7);
+                sleep(4000);
+                navigateToTargetWaypoint(new Waypoint(2200,1100, ODOMETRY_ANGLE_UNIT.fromDegrees(180),true));
+            default:
                 telemetry.addLine("Sequence: Finished!");
                 sequenceFinished = true;
                 break;
